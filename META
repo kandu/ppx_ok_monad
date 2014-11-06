@@ -1,0 +1,4 @@
+version = "0.1"
+description = "A ppx syntax extension for monad syntax sugar"
+ppx = "ppx_ok_monad"
+

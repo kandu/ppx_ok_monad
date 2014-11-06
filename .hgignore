@@ -1,0 +1,16 @@
+syntax: glob
+
+ppx_ok_monad
+
+**/*.annot
+
+**/.\#*
+**/*~
+**/Session.vim
+**/.*.swp
+
+**/*.o
+**/*.a
+**/*.so
+**/*.cm*
+
