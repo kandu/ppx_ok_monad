@@ -39,7 +39,7 @@ let cps_mapper argv=
   { default_mapper with
     expr= fun mapper expr->
       match expr with
-      | { pexp_desc= Pexp_extension ({txt= "c"; loc}, pstr)}->
+      | { pexp_desc= Pexp_extension ({txt= "m"; loc}, pstr)}->
         (match pstr with
         | PStr[{pstr_desc= Pstr_eval (expr, attrs)}] ->
           { (expr |> cps_sequence mapper |> cps_let mapper)
