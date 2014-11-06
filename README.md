@@ -28,9 +28,9 @@ will be transformed to
           bind (action 1)
             (fun _ -> say goodbye)))
 
-## indicate current monad module
+## indicate the current monad module
 
-To indicate current monad module, an alternative attribute can be added after the extension node.
+To indicate the current monad module, an alternative attribute can be added after the extension node.
 
 e.g.
 
