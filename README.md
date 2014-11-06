@@ -9,10 +9,10 @@ i.e.
 
 an expression like this
 
-    let%c a= b in
-    let%c hd::tl= expr () in
+    let%m a= b in
+    let%m hd::tl= expr () in
     say hi;
-    begin%c
+    begin%m
       action 1;
       action 2;
     end
