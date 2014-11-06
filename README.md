@@ -1,4 +1,4 @@
-# ok-monad
+# ok_monad
 
 A ppx syntax extension for monad syntax sugar
 
@@ -38,7 +38,7 @@ bind b
 
 ## indicate the current monad module
 
-To indicate the current monad module, an alternative attribute can be added after the extension node.
+To indicate the current monad module, an optional attribute can be added after the extension node.
 
 e.g.
 
@@ -49,7 +49,7 @@ begin%m[@Option]
   action 1;
   action 2;
   action 3;
-end;
+end
 ```
 
 will be transformed to
