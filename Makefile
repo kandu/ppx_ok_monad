@@ -21,6 +21,6 @@ install: $(PPX)
 	ocamlfind install $(PROJECT) META
 
 uninstall:
-	rm $(BINDIR)/$(PPX)
+	rm -f $(BINDIR)/$(PPX)
 	ocamlfind remove $(PROJECT)
 
