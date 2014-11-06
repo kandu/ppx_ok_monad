@@ -1,7 +1,8 @@
-ok-monad
-========
+# ok-monad
 
 A ppx syntax extension for monad syntax sugar
+
+## basic usage
 
 This ppx preprocessor transform `let ... in' expressions or sequence expressions to CPS code. 
 
@@ -26,4 +27,23 @@ will be transformed to
           say hi;
           bind (action 1)
             (fun _ -> say goodbye)))
+
+## indicate current monad module
+
+To indicate current monad module, an alternative attribute can be added after the extension node.
+
+e.g.
+
+    begin%m[@Option]
+      action 1;
+      action 2;
+      action 3;
+    end;
+
+will be transformed to
+
+    Option.bind (action 1)
+      (fun _ ->
+        Option.bind (action 2)
+          (fun _ -> action 3))
 
