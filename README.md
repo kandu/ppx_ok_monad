@@ -33,7 +33,7 @@ bind b
     (fun hd::tl ->
       say hi;
       bind (action 1)
-        (fun _ -> say goodbye)))
+        (fun _ -> action 2)))
 ```
 
 ## indicate the current monad module
