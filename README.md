@@ -1,4 +1,4 @@
-# ok_monad
+# ppx\_ok\_monad
 
 A ppx syntax extension for monad syntax sugar
 

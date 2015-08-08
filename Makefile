@@ -2,7 +2,7 @@ ifndef BINDIR
   BINDIR= $(shell opam config var bin)
 endif
 
-PROJECT= ok_monad
+PROJECT= ppx_ok_monad
 PPX= ppx_ok_monad
 
 $(PPX): $(PPX).ml

@@ -1,5 +1,5 @@
-name= "ok_monad"
-version = "0.1"
+name= "ppx_ok_monad"
+version = "0.1.1"
 description = "A ppx syntax extension for monad syntax sugar"
 ppx = "ppx_ok_monad"
 
