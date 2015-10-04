@@ -12,7 +12,7 @@ let ident_bind moduleName=
     | "" -> ""
     | s -> s ^ ".")
     ^ "bind"
-  in Exp.ident {txt= Longident.parse bind; loc= Location.none}
+  in Exp.ident (Location.mkloc (Longident.parse bind) !default_loc)
 
 let rec cps_sequence mapper expr=
   match expr with
@@ -37,7 +37,7 @@ let rec cps_sequence mapper expr=
           } ->
             Exp.(apply ident_bind [
               ("", expr1);
-              ("", fun_ "" None (Pat.any ()) (do_cps_sequence mapper expr2));
+              ("", fun_ "" None (Pat.construct (Location.mkloc (Longident.parse "()") !default_loc) None) (do_cps_sequence mapper expr2));
               ])
         | _ -> default_mapper.expr mapper expr)
       in do_cps_sequence mapper expr
