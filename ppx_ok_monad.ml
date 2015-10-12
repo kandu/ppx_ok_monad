@@ -6,13 +6,13 @@ open Ast_mapper
 
 open Location
 
-let ident_bind moduleName=
+let ident_bind moduleName loc=
   let bind=
     (match moduleName with
     | "" -> ""
     | s -> s ^ ".")
     ^ "bind"
-  in Exp.ident (Location.mkloc (Longident.parse bind) !default_loc)
+  in Exp.ident ~loc:(in_file loc.loc_start.pos_fname) (Location.mkloc (Longident.parse bind) !default_loc)
 
 let rec cps_sequence mapper expr=
   match expr with
@@ -23,8 +23,8 @@ let rec cps_sequence mapper expr=
     } ->
       let ident_bind=
         match pexp_attributes with
-        | [] -> ident_bind ""
-        | [(loc,_)]-> ident_bind loc.txt
+        | [] -> ident_bind "" pexp_loc
+        | [(loc,_)]-> ident_bind loc.txt loc.loc
         | _::(loc,_)::_->
           raise (Error (error ~loc:loc.loc "too many attributes" ~if_highlight:loc.txt))
       in
@@ -52,12 +52,12 @@ let cps_let mapper expr=
     } ->
       (match pexp_attributes with
       | []->
-        Exp.(apply (ident_bind "") [
+        Exp.(apply (ident_bind "" pexp_loc) [
           ("", binding.pvb_expr);
           ("", fun_ "" None binding.pvb_pat expr);
           ])
       | [(loc,_)]->
-        Exp.(apply (ident_bind loc.txt) [
+        Exp.(apply (ident_bind loc.txt loc.loc) [
           ("", binding.pvb_expr);
           ("", fun_ "" None binding.pvb_pat expr);
           ])
