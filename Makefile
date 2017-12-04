@@ -17,10 +17,8 @@ distclean: clean
 	rm -f $(PPX)
 
 install: $(PPX)
-	install -m 755 $(PPX) $(BINDIR)
-	ocamlfind install $(PROJECT) META
+	ocamlfind install $(PROJECT) $(PPX) META
 
 uninstall:
-	rm -f $(BINDIR)/$(PPX)
 	ocamlfind remove $(PROJECT)
 
