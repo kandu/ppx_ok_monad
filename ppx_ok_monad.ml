@@ -1,5 +1,5 @@
 open Migrate_parsetree
-open OCaml_402
+open OCaml_402.Ast
 
 open Asttypes
 open Parsetree
