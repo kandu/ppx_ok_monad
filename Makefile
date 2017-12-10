@@ -8,7 +8,7 @@ build:
 install: build
 	jbuilder install
 
-uninstall:
+uninstall: build
 	jbuilder uninstall
 
 clean:

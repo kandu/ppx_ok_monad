@@ -14,4 +14,6 @@ ppx_ok_monad
 **/*.so
 **/*.cm*
 _build
+.merlin
+ppx_ok_monad.install
 
