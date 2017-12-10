@@ -1,0 +1,23 @@
+opam-version: "1.2"
+maintainer: "zandoye@gmail.com"
+authors: [ "ZAN DoYe" ]
+homepage: "https://bitbucket.org/zandoye/ok_monad/"
+bug-reports: "https://bitbucket.org/zandoye/ok_monad/issues"
+license: "MIT"
+tags: [
+  "ppx"
+  "syntax extension"
+  "monadic"
+]
+dev-repo: "hg://https://bitbucket.org/zandoye/ok_monad"
+build: [
+  [make]
+]
+install: [make "install"]
+remove: [
+  ["ocamlfind" "remove" "ppx_ok_monad"]
+]
+depends: [
+  "jbuilder" {build}
+]
+available: [ocaml-version >= "4.02.0"]

@@ -13,4 +13,5 @@ ppx_ok_monad
 **/*.a
 **/*.so
 **/*.cm*
+_build
 

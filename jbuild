@@ -1,0 +1,9 @@
+(jbuild_version 1)
+
+(library
+ ((name ppx_ok_monad)
+  (public_name ppx_ok_monad)
+  (synopsis "A ppx syntax extension for monad syntax sugar")
+  (libraries (ocaml-migrate-parsetree))
+  (kind ppx_rewriter)))
+

@@ -1,9 +1,11 @@
+open Migrate_parsetree
+open OCaml_402
+
 open Asttypes
 open Parsetree
 
 open Ast_helper
-open Ast_mapper
-
+open Ast_mapper 
 open Location
 
 let ident_bind moduleName loc=
@@ -12,7 +14,7 @@ let ident_bind moduleName loc=
     | "" -> ""
     | s -> s ^ ".")
     ^ "bind"
-  in Exp.ident ~loc:(in_file loc.loc_start.pos_fname) (Location.mkloc (Longident.parse bind) !default_loc)
+  in Exp.ident ~loc:(in_file loc.loc_start.Lexing.pos_fname) (Location.mkloc (Longident.parse bind) !default_loc)
 
 let rec cps_sequence mapper expr=
   match expr with
@@ -65,7 +67,7 @@ let cps_let mapper expr=
         raise (Error (error ~loc:loc.loc "too many attributes" ~if_highlight:loc.txt)))
   | _ -> default_mapper.expr mapper expr
 
-let cps_mapper argv=
+let cps_mapper _config _cookies=
   { default_mapper with
     expr= fun mapper expr->
       match expr with
@@ -79,5 +81,5 @@ let cps_mapper argv=
       | _ -> default_mapper.expr mapper expr
   }
 
-let ()= run_main cps_mapper
+let ()= Driver.register ~name:"ppx_ok_monad" (module OCaml_402) cps_mapper
 
