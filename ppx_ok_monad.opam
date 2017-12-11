@@ -1,15 +1,15 @@
 opam-version: "1.2"
 maintainer: "zandoye@gmail.com"
 authors: [ "ZAN DoYe" ]
-homepage: "https://bitbucket.org/zandoye/ok_monad/"
-bug-reports: "https://bitbucket.org/zandoye/ok_monad/issues"
+homepage: "https://bitbucket.org/zandoye/ppx_ok_monad/"
+bug-reports: "https://bitbucket.org/zandoye/ppx_ok_monad/issues"
 license: "MIT"
 tags: [
   "ppx"
   "syntax extension"
   "monadic"
 ]
-dev-repo: "hg://https://bitbucket.org/zandoye/ok_monad"
+dev-repo: "hg://https://bitbucket.org/zandoye/ppx_ok_monad"
 build: [
   [make]
 ]
