@@ -1,7 +1,5 @@
 syntax: glob
 
-ppx_ok_monad
-
 **/*.annot
 
 **/.\#*
