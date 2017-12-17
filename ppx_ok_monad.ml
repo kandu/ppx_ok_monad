@@ -1,11 +1,11 @@
 open Migrate_parsetree
-open OCaml_402.Ast
+open OCaml_403.Ast
 
 open Asttypes
 open Parsetree
 
 open Ast_helper
-open Ast_mapper 
+open Ast_mapper
 open Location
 
 let ident_bind moduleName loc=
@@ -38,8 +38,8 @@ let rec cps_sequence mapper expr=
             pexp_attributes;
           } ->
             Exp.(apply ident_bind [
-              ("", expr1);
-              ("", fun_ "" None (Pat.construct (Location.mkloc (Longident.parse "()") !default_loc) None) (do_cps_sequence mapper expr2));
+              (Nolabel, expr1);
+              (Nolabel, fun_ Nolabel None (Pat.construct (Location.mkloc (Longident.parse "()") !default_loc) None) (do_cps_sequence mapper expr2));
               ])
         | _ -> default_mapper.expr mapper expr)
       in do_cps_sequence mapper expr
@@ -52,16 +52,21 @@ let cps_let mapper expr=
       pexp_loc;
       pexp_attributes;
     } ->
-      (match pexp_attributes with
+      (let attrs=
+         if OCaml_current.version = 402
+         then pexp_attributes
+         else binding.pvb_attributes
+       in
+      match attrs with
       | []->
         Exp.(apply (ident_bind "" pexp_loc) [
-          ("", binding.pvb_expr);
-          ("", fun_ "" None binding.pvb_pat expr);
+          (Nolabel, binding.pvb_expr);
+          (Nolabel, fun_ Nolabel None binding.pvb_pat expr);
           ])
       | [(loc,_)]->
         Exp.(apply (ident_bind loc.txt loc.loc) [
-          ("", binding.pvb_expr);
-          ("", fun_ "" None binding.pvb_pat expr);
+          (Nolabel, binding.pvb_expr);
+          (Nolabel, fun_ Nolabel None binding.pvb_pat expr);
           ])
       | _::(loc,_)::_->
         raise (Error (error ~loc:loc.loc "too many attributes" ~if_highlight:loc.txt)))
@@ -81,5 +86,5 @@ let cps_mapper _config _cookies=
       | _ -> default_mapper.expr mapper expr
   }
 
-let ()= Driver.register ~name:"ppx_ok_monad" (module OCaml_402) cps_mapper
+let ()= Driver.register ~name:"ppx_ok_monad" (module OCaml_403) cps_mapper
 
