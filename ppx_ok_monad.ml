@@ -14,9 +14,9 @@ let ident_bind moduleName loc=
     | "" -> ""
     | s -> s ^ ".")
     ^ "bind"
-  in Exp.ident ~loc:(in_file loc.loc_start.Lexing.pos_fname) (Location.mkloc (Longident.parse bind) !default_loc)
+  in Exp.ident (Location.mkloc (Longident.parse bind) loc)
 
-let rec cps_sequence mapper expr=
+let cps_sequence mapper expr=
   match expr with
   | {
       pexp_desc= Pexp_sequence (expr1, expr2);
@@ -26,7 +26,7 @@ let rec cps_sequence mapper expr=
       let ident_bind=
         match pexp_attributes with
         | [] -> ident_bind "" pexp_loc
-        | [(loc,_)]-> ident_bind loc.txt loc.loc
+        | [(loc,_)]-> ident_bind loc.txt pexp_loc
         | _::(loc,_)::_->
           raise (Error (error ~loc:loc.loc "too many attributes" ~if_highlight:loc.txt))
       in
@@ -37,9 +37,15 @@ let rec cps_sequence mapper expr=
             pexp_loc;
             pexp_attributes;
           } ->
-            Exp.(apply ident_bind [
+            Exp.(apply ~loc:pexp_loc ident_bind [
               (Nolabel, expr1);
-              (Nolabel, fun_ Nolabel None (Pat.construct (Location.mkloc (Longident.parse "()") !default_loc) None) (do_cps_sequence mapper expr2));
+              (Nolabel,
+                fun_
+                  ~loc:pexp_loc
+                  Nolabel
+                  None
+                  (Pat.construct (Location.mkloc (Longident.parse "()") !default_loc) None)
+                  (do_cps_sequence mapper expr2));
               ])
         | _ -> default_mapper.expr mapper expr)
       in do_cps_sequence mapper expr
@@ -59,14 +65,14 @@ let cps_let mapper expr=
        in
       match attrs with
       | []->
-        Exp.(apply (ident_bind "" pexp_loc) [
+        Exp.(apply ~loc:pexp_loc (ident_bind "" pexp_loc) [
           (Nolabel, binding.pvb_expr);
-          (Nolabel, fun_ Nolabel None binding.pvb_pat expr);
+          (Nolabel, fun_ ~loc:pexp_loc Nolabel None binding.pvb_pat (mapper.expr mapper expr));
           ])
       | [(loc,_)]->
-        Exp.(apply (ident_bind loc.txt loc.loc) [
+        Exp.(apply ~loc:pexp_loc (ident_bind loc.txt pexp_loc) [
           (Nolabel, binding.pvb_expr);
-          (Nolabel, fun_ Nolabel None binding.pvb_pat expr);
+          (Nolabel, fun_ ~loc:pexp_loc Nolabel None binding.pvb_pat (mapper.expr mapper expr));
           ])
       | _::(loc,_)::_->
         raise (Error (error ~loc:loc.loc "too many attributes" ~if_highlight:loc.txt)))
