@@ -16,8 +16,31 @@ let ident_bind moduleName loc=
     ^ "bind"
   in Exp.ident (Location.mkloc (Longident.parse bind) loc)
 
-let cps_sequence mapper expr=
+let cps_expr mapper expr=
   match expr with
+  | {
+      pexp_desc= Pexp_let (flag, [binding], expr);
+      pexp_loc;
+      pexp_attributes;
+    } ->
+      (let attrs=
+        if OCaml_current.version = 402
+        then pexp_attributes
+        else binding.pvb_attributes
+      in
+      match attrs with
+      | []->
+        Exp.(apply ~loc:pexp_loc (ident_bind "" pexp_loc) [
+          (Nolabel, binding.pvb_expr);
+          (Nolabel, fun_ ~loc:pexp_loc Nolabel None binding.pvb_pat (mapper.expr mapper expr));
+          ])
+      | [(loc,_)]->
+        Exp.(apply ~loc:pexp_loc (ident_bind loc.txt pexp_loc) [
+          (Nolabel, binding.pvb_expr);
+          (Nolabel, fun_ ~loc:pexp_loc Nolabel None binding.pvb_pat (mapper.expr mapper expr));
+          ])
+      | _::(loc,_)::_->
+        raise (Error (error ~loc:loc.loc "too many attributes" ~if_highlight:loc.txt)))
   | {
       pexp_desc= Pexp_sequence (expr1, expr2);
       pexp_loc;
@@ -51,33 +74,6 @@ let cps_sequence mapper expr=
       in do_cps_sequence mapper expr
   | _ -> default_mapper.expr mapper expr
 
-let cps_let mapper expr=
-  match expr with
-  | {
-      pexp_desc= Pexp_let (flag, [binding], expr);
-      pexp_loc;
-      pexp_attributes;
-    } ->
-      (let attrs=
-         if OCaml_current.version = 402
-         then pexp_attributes
-         else binding.pvb_attributes
-       in
-      match attrs with
-      | []->
-        Exp.(apply ~loc:pexp_loc (ident_bind "" pexp_loc) [
-          (Nolabel, binding.pvb_expr);
-          (Nolabel, fun_ ~loc:pexp_loc Nolabel None binding.pvb_pat (mapper.expr mapper expr));
-          ])
-      | [(loc,_)]->
-        Exp.(apply ~loc:pexp_loc (ident_bind loc.txt pexp_loc) [
-          (Nolabel, binding.pvb_expr);
-          (Nolabel, fun_ ~loc:pexp_loc Nolabel None binding.pvb_pat (mapper.expr mapper expr));
-          ])
-      | _::(loc,_)::_->
-        raise (Error (error ~loc:loc.loc "too many attributes" ~if_highlight:loc.txt)))
-  | _ -> default_mapper.expr mapper expr
-
 let cps_mapper _config _cookies=
   { default_mapper with
     expr= fun mapper expr->
@@ -85,7 +81,7 @@ let cps_mapper _config _cookies=
       | { pexp_desc= Pexp_extension ({txt= "m"; loc}, pstr)}->
         (match pstr with
         | PStr[{pstr_desc= Pstr_eval (expr, attrs)}] ->
-          { (expr |> cps_sequence mapper |> cps_let mapper)
+          { (expr |> cps_expr mapper)
             with pexp_loc= expr.pexp_loc
           }
         | _ -> raise (Error (error ~loc:loc "unknown error")))
