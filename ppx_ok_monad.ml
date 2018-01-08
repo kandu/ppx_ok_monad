@@ -67,7 +67,7 @@ let cps_expr mapper expr=
                   ~loc:pexp_loc
                   Nolabel
                   None
-                  (Pat.construct (Location.mkloc (Longident.parse "()") !default_loc) None)
+                  (Pat.construct ~loc:expr1.pexp_loc (Location.mkloc (Longident.parse "()") !default_loc) None)
                   (do_cps_sequence mapper expr2));
               ])
         | _ -> default_mapper.expr mapper expr)
