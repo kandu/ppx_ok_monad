@@ -3,14 +3,14 @@ PROJECT= ppx_ok_monad
 .PHONY: build, install clean
 
 build:
-	jbuilder build
+	dune build
 
 install: build
-	jbuilder install
+	dune install
 
 uninstall: build
-	jbuilder uninstall
+	dune uninstall
 
 clean:
-	jbuilder clean
+	dune clean
 

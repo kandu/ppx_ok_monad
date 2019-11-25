@@ -19,7 +19,7 @@ let ident_bind moduleName loc=
 let cps_expr mapper expr=
   match expr with
   | {
-      pexp_desc= Pexp_let (flag, [binding], expr);
+      pexp_desc= Pexp_let (_flag, [binding], expr);
       pexp_loc;
       pexp_attributes;
     } ->
@@ -42,7 +42,7 @@ let cps_expr mapper expr=
       | _::(loc,_)::_->
         raise (Error (error ~loc:loc.loc "too many attributes" ~if_highlight:loc.txt)))
   | {
-      pexp_desc= Pexp_sequence (expr1, expr2);
+      pexp_desc= Pexp_sequence (_expr1, _expr2);
       pexp_loc;
       pexp_attributes;
     } ->
@@ -58,10 +58,10 @@ let cps_expr mapper expr=
         | {
             pexp_desc= Pexp_sequence (expr1, expr2);
             pexp_loc;
-            pexp_attributes;
+            pexp_attributes=_;
           } ->
             Exp.(apply ~loc:pexp_loc ident_bind [
-              (Nolabel, expr1);
+              (Nolabel, mapper.expr mapper expr1);
               (Nolabel,
                 fun_
                   ~loc:pexp_loc
@@ -70,7 +70,7 @@ let cps_expr mapper expr=
                   (Pat.construct ~loc:expr1.pexp_loc (Location.mkloc (Longident.parse "()") !default_loc) None)
                   (do_cps_sequence mapper expr2));
               ])
-        | _ -> default_mapper.expr mapper expr)
+        | _ -> mapper.expr mapper expr)
       in do_cps_sequence mapper expr
   | _ -> default_mapper.expr mapper expr
 
@@ -78,9 +78,9 @@ let cps_mapper _config _cookies=
   { default_mapper with
     expr= fun mapper expr->
       match expr with
-      | { pexp_desc= Pexp_extension ({txt= "m"; loc}, pstr)}->
+      | { pexp_desc= Pexp_extension ({txt= "m"; loc}, pstr); _}->
         (match pstr with
-        | PStr[{pstr_desc= Pstr_eval (expr, attrs)}] ->
+        | PStr[{pstr_desc= Pstr_eval (expr, _attrs);_ }] ->
           { (expr |> cps_expr mapper)
             with pexp_loc= expr.pexp_loc
           }
