@@ -40,7 +40,7 @@ let cps_expr mapper expr=
           (Nolabel, fun_ ~loc:pexp_loc Nolabel None binding.pvb_pat (mapper.expr mapper expr));
           ])
       | _::(loc,_)::_->
-        raise (Error (error ~loc:loc.loc "too many attributes" ~if_highlight:loc.txt)))
+        raise (Error (error ~loc:loc.loc "too many attributes")))
   | {
       pexp_desc= Pexp_sequence (_expr1, _expr2);
       pexp_loc;
@@ -51,7 +51,7 @@ let cps_expr mapper expr=
         | [] -> ident_bind "" pexp_loc
         | [(loc,_)]-> ident_bind loc.txt pexp_loc
         | _::(loc,_)::_->
-          raise (Error (error ~loc:loc.loc "too many attributes" ~if_highlight:loc.txt))
+          raise (Error (error ~loc:loc.loc "too many attributes"))
       in
       let rec do_cps_sequence mapper expr=
         (match expr with
